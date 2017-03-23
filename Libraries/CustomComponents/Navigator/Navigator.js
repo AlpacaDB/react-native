@@ -681,8 +681,18 @@ var Navigator = React.createClass({
    * Push a scene off the screen, so that opacity:0 scenes will not block touches sent to the presented scenes
    */
   _disableScene: function(sceneIndex) {
-    this._sceneRefs[sceneIndex] &&
+    if (!this._sceneRefs[sceneIndex]) {
+      return;
+    }
+    let nextRoute = this.state.routeStack[sceneIndex + 1];
+
+    if (nextRoute && nextRoute.opts && nextRoute.opts.isPreViewStatic) {
+      this._sceneRefs[sceneIndex].setNativeProps({
+        pointerEvents: 'none',
+      });
+    } else {
       this._sceneRefs[sceneIndex].setNativeProps(SCENE_DISABLED_NATIVE_PROPS);
+    }
   },
 
   /**
